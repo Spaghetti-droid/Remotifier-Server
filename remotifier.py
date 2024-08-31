@@ -24,6 +24,9 @@ Start an interactive session to send media control commands to a remotifier serv
     -'u':'Volume Up'
     -'d':'Volume Down'
     -'m':'Mute'
+    -'>':'Press Forewards key'
+    -'<':'Press Backwards key'
+    - 0 to 9, 'f', 'j', 'l', 's':'Press this key' (Useful for common streaming service shortcuts)
     
 Several commands can be chained together (ie 'uuu' will increase volume 3 times)
 ''')
