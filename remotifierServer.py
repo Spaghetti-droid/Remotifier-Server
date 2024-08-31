@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import socket
 from websockets.asyncio.server import serve
 from pynput.keyboard import Key, Controller
 
@@ -11,8 +12,11 @@ DEFAULT_PORT = 42121
 async def main():  
     logging.basicConfig(filename='remotifierServer.log', level=logging.DEBUG)
     logger.info("Server starting up")
-    async with serve(listen, "localhost", DEFAULT_PORT):
-        await asyncio.get_running_loop().create_future()
+    async with serve(listen, "", DEFAULT_PORT):
+        hostIdMessage = f'Listening on host: {socket.gethostname()}'
+        print(hostIdMessage)
+        logger.info(hostIdMessage)
+        await asyncio.get_running_loop().create_future() 
 
 async def listen(websocket):
     """Listen for commands on websocket
