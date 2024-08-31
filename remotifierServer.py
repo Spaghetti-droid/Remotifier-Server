@@ -51,9 +51,32 @@ def getKey(c: str) -> Key:
             return Key.media_volume_down
         case 'm':
             return Key.media_volume_mute
+        case '>':
+            # Common +5s key
+            return Key.right
+        case '<':
+            # Common -5s key
+            return Key.left
+        case 'j':
+            # Common +10s key
+            return 'j'
+        case 'l':
+            # Common -10s key
+            return 'l'
+        case 's':
+            # Common skip intro key
+            return 's'
+        case 'f':
+            # Common toggle fullscreen key
+            return 'f'
         case _:
-            logger.warning(f"Input not recognised: '{c}'")
-            return None
+            try:
+                # 0-9 are common seek x0% keys
+                int(c)
+                return c
+            except ValueError:
+                logger.warning(f"Input not recognised: '{c}'")
+                return None
         
 
 if __name__ == "__main__":
