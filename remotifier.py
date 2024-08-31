@@ -27,7 +27,7 @@ Start an interactive session to send media control commands to a remotifier serv
     
 Several commands can be chained together (ie 'uuu' will increase volume 3 times)
 ''')
-    parser.add_argument("--host", help="IP or name of the machine to control")
+    parser.add_argument("--host", help="IP or name of the machine to control", default=DEFAULT_HOST)
     return parser.parse_args()
 
 def main(): 
