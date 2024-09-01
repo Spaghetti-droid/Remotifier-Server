@@ -3,6 +3,8 @@ A server and client pair that allow the control of media playing on the server h
 
 
 ## Installation
+### Using the exe files
+Copy the file you want to use to where you want it. Take remotify.exe for the client, and remotifyServer.exe for the server.
 ### Using sources
 Copy the necessary source files where you want them. The remotifyCommon.py file is needed by both the server and the client. For a server installation you'll need remotifyServer.py and the common file. For a client installation you'll need the common file and remotify.py.
 #### Dependencies
@@ -15,6 +17,9 @@ Install these using
     pip install <dependency name>
 
 ## Usage
+
+Note all documentation below uses the python files. The executables should be called in the command line directly, without going through python.
+
 ### Starting the Server
 
       python remotifyServer.py -h
@@ -41,9 +46,12 @@ Install these using
       options:
         -h, --help  show this help message and exit
 
-Execute the server by running the following command in the terminal:
+Execute the server by running either of the following command in the command line:
 
     python remotifyServer.py
+or 
+
+    remotifyServer.exe
 
 The executable will respond with the following text
 
@@ -84,6 +92,10 @@ The client is run using
     
     python remotify.py <Host Name>
 
+or
+
+    remotify.exe <Host Name>
+
 where the host name can be found from the the server's startup message.
 
 ### Controlling the server using the client
@@ -94,5 +106,11 @@ For example to start playing a video, put the volume up 3 times, and then move o
 ## Known issues
 ### Server stops reacting to client after client machine was suspended
 This happens because the server closes the connection, but the client is not aware of the connection being closed. Waiting 60 seconds should allow the client to reset itself.
+
+## Generating the exe files
+The exes can be generated using pyinstaller. In the project root directory, execute:
+    
+    pyinstaller -F remotify.py
+    pyinstaller -F remotifyServer.py
 
     
