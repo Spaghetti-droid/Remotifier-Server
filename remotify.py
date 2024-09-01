@@ -6,8 +6,6 @@ from websockets.sync.client import connect
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_HOST = 'localhost'
-
 def initArgParser() -> argparse.Namespace:
     """Defines the arguments that the program can use
 
@@ -19,7 +17,7 @@ def initArgParser() -> argparse.Namespace:
                                      description=f'''\
 Start an interactive session to send media control commands to a remotifier server. {common.SERVER_COMMAND_DESCRIPTION}
 ''')
-    parser.add_argument("--host", help="IP or name of the machine to control", default=DEFAULT_HOST)
+    parser.add_argument("host", help="IP or name of the machine to control")
     return parser.parse_args()
 
 def main(): 
