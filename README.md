@@ -1,2 +1,2 @@
-# Remotifier-Server
-A receiving server that allows control of media on the host machine via websocket
+# Remotify
+A server and client that allow the control of media playing on the hist device by the client
