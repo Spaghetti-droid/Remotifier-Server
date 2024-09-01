@@ -4,7 +4,7 @@ import argparse
 import asyncio
 import logging
 import socket
-from websockets.asyncio.server import serve
+from websockets.asyncio.server import serve, ServerConnection
 from pynput.keyboard import Key, Controller
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ async def main():
         logger.info(hostIdMessage)
         await asyncio.get_running_loop().create_future() 
 
-async def listen(websocket):
+async def listen(websocket:ServerConnection):
     """Listen for commands on websocket
     Args:
         websocket
