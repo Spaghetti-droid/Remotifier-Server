@@ -1,3 +1,5 @@
+import remotifyCommon as common
+
 import argparse
 import asyncio
 import logging
@@ -8,8 +10,6 @@ from pynput.keyboard import Key, Controller
 logger = logging.getLogger(__name__)
 keyboard = Controller()
 
-DEFAULT_PORT = 42121
-
 def initArgParser() -> argparse.Namespace:
     """Defines the arguments that the program can use
 
@@ -18,28 +18,16 @@ def initArgParser() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(prog="remotifyServer.py", 
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description='''\
-Start a remotify server, which listens for single-character commands to execute. Commands recognised by the server:
-
-    -'p':'Play/Pause'
-    -'n':'Next'
-    -'b':'Back'
-    -'u':'Volume Up'
-    -'d':'Volume Down'
-    -'m':'Mute'
-    -'>':'Press Forewards key'
-    -'<':'Press Backwards key'
-    - 0 to 9, 'f', 'j', 'l', 's':'Press this key' (Useful for common streaming service shortcuts)
-    
-Several commands can be chained together (ie 'uuu' will increase volume 3 times)
+                                     description=f'''\
+Start a remotify server, which listens for single-character commands to execute. {common.SERVER_COMMAND_DESCRIPTION}
 ''')
     return parser.parse_args()
 
 async def main():  
-    logging.basicConfig(filename='remotifierServer.log', level=logging.DEBUG)
+    logging.basicConfig(filename='remotifyServer.log', level=logging.DEBUG)
     initArgParser()
     logger.info("Server starting up")
-    async with serve(listen, "", DEFAULT_PORT):
+    async with serve(listen, "", common.DEFAULT_PORT):
         hostIdMessage = f'Listening on host: {socket.gethostname()}'
         print(hostIdMessage)
         logger.info(hostIdMessage)
