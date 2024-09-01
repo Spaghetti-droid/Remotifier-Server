@@ -52,18 +52,28 @@ async def listen(websocket):
     """
     async for message in websocket:
         logger.debug(f"Recieved input:'{message}'")
+        literalKeys = False
         for c in message:
-            key = getKey(c)
+            # ! means interpret the rest as character key presses
+            if not literalKeys and c == '!':
+                literalKeys = True
+                continue
+                
+            if literalKeys:
+                key = c
+            else:
+                key = getNonCharKey(c)
+                
             if key:
                 keyboard.press(key)
                 keyboard.release(key)
         
-def getKey(c: str) -> Key:
-    """Convert c into a Key
+def getNonCharKey(c: str) -> Key:
+    """Convert c into a media control Key
     Args:
-        c (str): A character representing an operation to perform
+        c (str): A character representing a media control operation
     Returns:
-        Key: The key press that the character represents
+        Key: The key press that accomplishes the operation
     """
     match c:
         case 'p':
@@ -84,26 +94,15 @@ def getKey(c: str) -> Key:
         case '<':
             # Common -5s key
             return Key.left
-        case 'j':
-            # Common +10s key
-            return 'j'
-        case 'l':
-            # Common -10s key
-            return 'l'
-        case 's':
-            # Common skip intro key
-            return 's'
-        case 'f':
-            # Common toggle fullscreen key
-            return 'f'
+        case '^':
+            return Key.up
+        case 'v':
+            return Key.down
+        case 'e':
+            return Key.enter
         case _:
-            try:
-                # 0-9 are common seek x0% keys
-                int(c)
-                return c
-            except ValueError:
-                logger.warning(f"Input not recognised: '{c}'")
-                return None
+            logger.warning(f"Non-literal input not recognised: '{c}'")
+            return None
         
 
 if __name__ == "__main__":
