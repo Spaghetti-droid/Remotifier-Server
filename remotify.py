@@ -3,6 +3,8 @@ import remotifyCommon as common
 import logging
 import argparse
 from websockets.sync.client import connect
+from websockets.exceptions import ConnectionClosed
+from inputimeout import inputimeout, TimeoutOccurred
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +25,32 @@ Start an interactive session to send media control commands to a remotifier serv
 def main(): 
     logging.basicConfig(filename='remotify.log', level=logging.DEBUG)
     args = initArgParser()
-    with connect(f"ws://{args.host}:{common.DEFAULT_PORT}") as websocket:
+    reconnect = True
+    while reconnect:
+        reconnect = connectToServer(args.host)
+            
+def connectToServer(host:str) -> bool:
+    """Connect to the server. Returns when connection has been closed.
+    Args:
+        host (str): Name of the host we are connecting to
+    Returns:
+        bool: True if we should wait for next user input and try to reopen the connection
+    """
+    firstinput = input("")
+    with connect(f"ws://{host}:{common.DEFAULT_PORT}") as websocket:
+        websocket.send(firstinput)
         while True:
             try:
-                websocket.send(input(""))
+                websocket.send(inputimeout("", timeout=60))
+            except TimeoutOccurred:
+                logger.debug("User inactive. Closing connection.")
+                return True
             except KeyboardInterrupt:
-                logger.info("Interrupt received, terminating session.")
-                break
+                logger.debug("Interrupt received, terminating session.")
+                return False
+            except ConnectionClosed as cc:
+                logger.warning("Connection is closed. Send cancelled", exc_info=cc)
+                return True
             
 if __name__ == "__main__":
     main()
