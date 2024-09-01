@@ -29,8 +29,8 @@ async def main():
         connectToServer(args.host)
             
             
-async def connectToServer(host:str) -> bool:
-    async with connect(f"ws://{host}:{common.DEFAULT_PORT}") as websocket:
+def connectToServer(host:str) -> bool:
+    with connect(f"ws://{host}:{common.DEFAULT_PORT}") as websocket:
         while True:
             try:
                 websocket.send(input(""))
@@ -40,7 +40,7 @@ async def connectToServer(host:str) -> bool:
                 return False
             except Exception as e:
                 logger.error("Exception during connection", e)
-                return True
+                return False
             
 if __name__ == "__main__":
     asyncio.run(main())
