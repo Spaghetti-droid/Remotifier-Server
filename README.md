@@ -86,7 +86,7 @@ The client is run using
 
 where the host name can be found from the the server's startup message.
 
-### Controlling the server
+### Controlling the server using the client
 
 The client expects a series of characters terminated by a return, where each character is a command to be sent (see the lists above).   
 For example to start playing a video, put the volume up 3 times, and then move on to the next video, one would write `puuun` into the command prompt.
