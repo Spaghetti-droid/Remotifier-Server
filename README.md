@@ -15,7 +15,7 @@ Install these using
     pip install <dependency name>
 
 ## Usage
-### Server
+### Starting the Server
 
       python remotifyServer.py -h
 
@@ -51,7 +51,7 @@ The executable will respond with the following text
 
 This indicates that the server has started up.
 
-### Client
+### Starting the Client
 
     python remotify.py -h
 
