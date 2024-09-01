@@ -13,7 +13,7 @@ def initArgParser() -> argparse.Namespace:
     Returns:
         argparse.Namespace: The argument values the user specified to the application
     """
-    parser = argparse.ArgumentParser(prog="remotifier.py", 
+    parser = argparse.ArgumentParser(prog="remotify.py", 
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description='''\
 Start an interactive session to send media control commands to a remotifier server. Commands recognised by the server:

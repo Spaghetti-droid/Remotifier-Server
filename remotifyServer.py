@@ -16,10 +16,10 @@ def initArgParser() -> argparse.Namespace:
     Returns:
         argparse.Namespace: The argument values the user specified to the application
     """
-    parser = argparse.ArgumentParser(prog="remotifier.py", 
+    parser = argparse.ArgumentParser(prog="remotifyServer.py", 
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description='''\
-Start a remotifier server, which listens for single-character commands to execute. Commands recognised by the server:
+Start a remotify server, which listens for single-character commands to execute. Commands recognised by the server:
 
     -'p':'Play/Pause'
     -'n':'Next'
