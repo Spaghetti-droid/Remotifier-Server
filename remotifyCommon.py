@@ -1,3 +1,5 @@
+# Constants that are shared between server and client
+
 DEFAULT_PORT = 42121
 
 SERVER_COMMAND_DESCRIPTION = """\
