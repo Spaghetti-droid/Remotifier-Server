@@ -2,11 +2,15 @@ import remotifyCommon as common
 
 import logging
 import argparse
+import queue
+import threading
 from websockets.sync.client import connect
 from websockets.exceptions import ConnectionClosed
-from inputimeout import inputimeout, TimeoutOccurred
 
+# If the user isn't using the connection, we close it
+CONNECTION_TIMEOUT = 60 
 logger = logging.getLogger(__name__)
+toSend = queue.Queue()
 
 def initArgParser() -> argparse.Namespace:
     """Defines the arguments that the program can use
@@ -25,32 +29,46 @@ Start an interactive session to send media control commands to a remotifier serv
 def main(): 
     logging.basicConfig(filename='remotify.log', level=logging.DEBUG)
     args = initArgParser()
+    
+    comThread = threading.Thread(target=connectToServer, args=[args.host], daemon=True)
+    comThread.start()
+    
+    # t should only die if an unhandled exception happens. In this case, there is no point filling the queue as it won't be consumed
+    while comThread.is_alive():
+        toSend.put(input(""))
+         
+def connectToServer(host:str):
+    """Connect to the server via websocket. If the connection was closed deliberately, get ready to reopen it. 
+
+    Args:
+        host (str): _description_
+    """
+    print("Ready to connect to server")
     reconnect = True
-    while reconnect:
-        reconnect = connectToServer(args.host)
+    while(reconnect):
+        try:
+            connectOnce(host)
+        except queue.Empty:
+            logger.debug('User is inactive. Disconnecting websocket')
+        except ConnectionClosed as cc:
+            logger.warning('Connection was closed. Reopening it.', exc_info=cc)
             
-def connectToServer(host:str) -> bool:
-    """Connect to the server. Returns when connection has been closed.
+def connectOnce(host:str) -> None:
+    """Connect to the server via websocket upon first message received.
+    Send all further messages until a timeout or an error happens
     Args:
         host (str): Name of the host we are connecting to
-    Returns:
-        bool: True if we should wait for next user input and try to reopen the connection
+    Raises:
+        queue.Empty: When there hasn't been any user input in {TIMEOUT} seconds
+        ConnectionClosed: When the server has closed the connection
     """
-    firstinput = input("")
+    firstinput = toSend.get()
     with connect(f"ws://{host}:{common.DEFAULT_PORT}") as websocket:
+        logger.info("Connected to server")
         websocket.send(firstinput)
         while True:
-            try:
-                websocket.send(inputimeout("", timeout=60))
-            except TimeoutOccurred:
-                logger.debug("User inactive. Closing connection.")
-                return True
-            except KeyboardInterrupt:
-                logger.debug("Interrupt received, terminating session.")
-                return False
-            except ConnectionClosed as cc:
-                logger.warning("Connection is closed. Send cancelled", exc_info=cc)
-                return True
+            websocket.send(toSend.get(timeout=60)) 
+            toSend.task_done()
             
 if __name__ == "__main__":
     main()
