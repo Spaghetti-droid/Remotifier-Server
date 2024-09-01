@@ -38,6 +38,7 @@ async def connectToServer(host:str) -> bool:
                 toSend = input("")
                 async with asyncio.timeout(delay=5):
                     await websocket.send(toSend)
+                    await asyncio.sleep(0)  # yield control to the event loop
             except KeyboardInterrupt:
                 logger.info("Interrupt received, terminating session.")
                 return False
