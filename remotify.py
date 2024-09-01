@@ -3,7 +3,7 @@ import remotifyCommon as common
 import logging
 import argparse
 import asyncio
-from websockets.sync.client import connect
+from websockets.asyncio.client import connect
 
 logger = logging.getLogger(__name__)
 
@@ -24,20 +24,26 @@ Start an interactive session to send media control commands to a remotifier serv
 async def main(): 
     logging.basicConfig(filename='remotify.log', level=logging.DEBUG)
     args = initArgParser()
-    reconnect = connectToServer(args.host)
+    reconnect = await connectToServer(args.host)
     while reconnect:
-        connectToServer(args.host)
+        print("Attempting to reconnect to server")
+        reconnect = await connectToServer(args.host)
             
             
-def connectToServer(host:str) -> bool:
-    with connect(f"ws://{host}:{common.DEFAULT_PORT}") as websocket:
+async def connectToServer(host:str) -> bool:
+    async with connect(f"ws://{host}:{common.DEFAULT_PORT}") as websocket:
+        print(f"Connected to server")
         while True:
             try:
-                websocket.send(input(""))
-                websocket.recv()
+                toSend = input("")
+                async with asyncio.timeout(delay=5):
+                    await websocket.send(toSend)
             except KeyboardInterrupt:
                 logger.info("Interrupt received, terminating session.")
                 return False
+            except TimeoutError:
+                logger.info("Send timed out. Closing connection.")
+                return True
             except Exception as e:
                 logger.error("Exception during connection", e)
                 return False

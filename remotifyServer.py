@@ -55,8 +55,6 @@ async def listen(websocket:ServerConnection):
             if key:
                 keyboard.press(key)
                 keyboard.release(key)
-
-        await websocket.send('1')
         
 def getNonCharKey(c: str) -> Key:
     """Convert c into a media control Key
