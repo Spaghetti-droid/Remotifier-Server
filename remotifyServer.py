@@ -94,4 +94,7 @@ def getNonCharKey(c: str) -> Key:
         
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.debug("Keyboard interrupt received. Shutting down.")

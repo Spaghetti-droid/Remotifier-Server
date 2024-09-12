@@ -71,4 +71,7 @@ def connectOnce(host:str) -> None:
             toSend.task_done()
             
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        logger.debug("Keyboard interrupt received. Shutting down.")
