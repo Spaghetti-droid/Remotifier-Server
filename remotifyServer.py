@@ -28,12 +28,15 @@ Start a remotify server, which listens for single-character commands to execute.
 async def main(): 
     args = initArgParser() 
     logging.basicConfig(format=common.LOG_FORMAT, filename='remotifyServer.log', level=args.logLevel.upper())    
+    if not isinstance(args.port, int):
+        raise ValueError("Port must be an integer")
+    
     logger.warning("Server starting up")
     try:
         async with serve(listen, "", args.port):
-            hostIdMessage = f'Listening on host: {socket.gethostname()}'
-            print(hostIdMessage)
-            logger.info(hostIdMessage)
+            hostName = socket.gethostname()
+            print(f'Listening on host: {hostName}')
+            logger.info(f"Host name: {hostName}")
             await asyncio.get_running_loop().create_future() 
     except asyncio.exceptions.CancelledError:
         logger.debug("Server execution interrupted.")
@@ -101,4 +104,11 @@ def getNonCharKey(c: str) -> Key:
         
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        if hasattr(e, 'message'):
+            print(f"Error: {e.message}")
+        else:
+            print(f"Error: {e}")
+        logger.exception(msg="Program terminated due to an exception", exc_info=e)

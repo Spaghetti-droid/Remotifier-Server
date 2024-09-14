@@ -35,7 +35,7 @@ def main():
     try:
         logger.warning("Starting up")
         
-        comThread = threading.Thread(target=connectToServer, args=[args.host, args.port], daemon=True)
+        comThread = threading.Thread(target=runConnectToServer, args=[args.host, args.port], daemon=True)
         comThread.start()
         
         # comThread should only die if an unhandled exception happens. In this case, there is no point filling the queue as it won't be consumed
@@ -45,12 +45,29 @@ def main():
         logger.debug("Keyboard interrupt received")
     finally:
         logger.warning("Shutting down")
+        
+def runConnectToServer(host:str, port:int):
+    """Connect to server and handle all exceptions by logging them
+    and displaying a more user-friendly message on the console
+    This method assumes it is called by a thread
+    Args:
+        host (str)
+        port (int)
+    """
+    try:
+        connectToServer(host, port)
+    except Exception as e:
+        if hasattr(e, 'message'):
+            print(f"Error: {e.message}")
+        else:
+            print(f"Error: {e}")
+        logger.exception(msg="Thread terminated due to an exception", exc_info=e)
+        print("Connection to server closed. Client will exit at next input!")
          
 def connectToServer(host:str, port:int):
     """Connect to the server via websocket. If the connection was closed deliberately, get ready to reopen it. 
-
     Args:
-        host (str): 
+        host (str)
         port (int)
     """
     print("Ready to connect to server")
@@ -81,4 +98,11 @@ def connectOnce(host:str, port:int) -> None:
             toSend.task_done()
             
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        if hasattr(e, 'message'):
+            print(f"Error: {e.message}")
+        else:
+            print(f"Error: {e}")
+        logger.exception(msg="Program terminated due to an exception", exc_info=e)
