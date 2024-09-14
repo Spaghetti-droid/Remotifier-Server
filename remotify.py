@@ -42,7 +42,7 @@ def main():
         while comThread.is_alive():
             toSend.put(input(""))
     except KeyboardInterrupt:
-        logger.debug("Keyboard interrupt received. Shutting down.")
+        logger.debug("Keyboard interrupt received")
     finally:
         logger.warning("Shutting down")
          
