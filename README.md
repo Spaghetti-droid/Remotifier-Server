@@ -28,23 +28,26 @@ Note all documentation below uses the python files. The executables should be ca
 
       Start a remotify server, which listens for single-character commands to execute. Commands recognised by the server:
 
-          - 'p': Play/Pause
-          - 'n': Next Track
-          - 'b': Back/Previous Track
-          - 'u': Volume Up
-          - 'd': Volume Down
-          - 'm': Mute
-          - '>': Press Forewards key
-          - '<': Press Backwards key
-          - '^': Press Up Key
-          - 'v': Press Down Key
-          - 'e': Press Enter Key
-          - '!': Enter literal mode. All characters after this one will be interpreted as requests to press that character's key. For example '!fish' will cause the host to press the 'f', 'i', 's', 'h' keys.
+        - 'p': Play/Pause
+        - 'n': Next Track
+        - 'b': Back/Previous Track
+        - 'u': Volume Up
+        - 'd': Volume Down
+        - 'm': Mute
+        - '>': Press Forewards key
+        - '<': Press Backwards key
+        - '^': Press Up Key
+        - 'v': Press Down Key
+        - 'e': Press Enter Key
+        - '!': Enter literal mode. All characters after this one will be interpreted as requests to press that character's key. For example '!fish' will cause the host to press the 'f', 'i', 's', 'h' keys.
 
       Several commands can be chained together (ie 'uuu' will increase volume 3 times)
 
       options:
         -h, --help  show this help message and exit
+        -l LOGLEVEL, --log-level LOGLEVEL
+                        Level of detail for logged events. Default: WARNING
+        -p PORT, --port PORT  Port to listen to. Normally, this can be left at the default value. Default: 42121.
 
 Execute the server by running either of the following command in the command line:
 
@@ -87,6 +90,9 @@ This indicates that the server has started up.
 
     options:
         -h, --help  show this help message and exit
+        -l LOGLEVEL, --log-level LOGLEVEL
+                        Level of detail for logged events. Default: WARNING
+        -p PORT, --port PORT  Host port to connect to. Normally, this can be left at the default value. Default: 42121.
 
 The client is run using
     
