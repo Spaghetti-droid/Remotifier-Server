@@ -3,6 +3,7 @@ import remotifyCommon as common
 import logging
 import argparse
 import queue
+import readline
 import threading
 from websockets.sync.client import connect
 from websockets.exceptions import ConnectionClosed
