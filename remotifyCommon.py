@@ -2,6 +2,7 @@
 
 DEFAULT_PORT = 42121
 DEFAULT_LOG_LEVEL = "WARNING"
+LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 
 SERVER_COMMAND_DESCRIPTION = """\
 Commands recognised by the server:

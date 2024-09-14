@@ -30,14 +30,21 @@ Start an interactive session to send media control commands to a remotifier serv
 
 def main(): 
     args = initArgParser()
-    logging.basicConfig(filename='remotify.log', level=args.logLevel.upper())
+    logging.basicConfig(format=common.LOG_FORMAT, filename='remotify.log', level=args.logLevel.upper())
     
-    comThread = threading.Thread(target=connectToServer, args=[args.host, args.port], daemon=True)
-    comThread.start()
-    
-    # comThread should only die if an unhandled exception happens. In this case, there is no point filling the queue as it won't be consumed
-    while comThread.is_alive():
-        toSend.put(input(""))
+    try:
+        logger.warning("Starting up")
+        
+        comThread = threading.Thread(target=connectToServer, args=[args.host, args.port], daemon=True)
+        comThread.start()
+        
+        # comThread should only die if an unhandled exception happens. In this case, there is no point filling the queue as it won't be consumed
+        while comThread.is_alive():
+            toSend.put(input(""))
+    except KeyboardInterrupt:
+        logger.debug("Keyboard interrupt received. Shutting down.")
+    finally:
+        logger.warning("Shutting down")
          
 def connectToServer(host:str, port:int):
     """Connect to the server via websocket. If the connection was closed deliberately, get ready to reopen it. 
@@ -74,7 +81,4 @@ def connectOnce(host:str, port:int) -> None:
             toSend.task_done()
             
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        logger.debug("Keyboard interrupt received. Shutting down.")
+    main()

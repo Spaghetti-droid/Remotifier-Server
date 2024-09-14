@@ -27,13 +27,18 @@ Start a remotify server, which listens for single-character commands to execute.
 
 async def main(): 
     args = initArgParser() 
-    logging.basicConfig(filename='remotifyServer.log', level=args.logLevel.upper())    
-    logger.info("Server starting up")
-    async with serve(listen, "", args.port):
-        hostIdMessage = f'Listening on host: {socket.gethostname()}'
-        print(hostIdMessage)
-        logger.info(hostIdMessage)
-        await asyncio.get_running_loop().create_future() 
+    logging.basicConfig(format=common.LOG_FORMAT, filename='remotifyServer.log', level=args.logLevel.upper())    
+    logger.warning("Server starting up")
+    try:
+        async with serve(listen, "", args.port):
+            hostIdMessage = f'Listening on host: {socket.gethostname()}'
+            print(hostIdMessage)
+            logger.info(hostIdMessage)
+            await asyncio.get_running_loop().create_future() 
+    except asyncio.exceptions.CancelledError:
+        logger.debug("Server execution interrupted.")
+    finally:
+        logger.warning("Server shutting down")
 
 async def listen(websocket:ServerConnection):
     """Listen for commands on websocket
@@ -96,7 +101,4 @@ def getNonCharKey(c: str) -> Key:
         
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        logger.debug("Keyboard interrupt received. Shutting down.")
+    asyncio.run(main())
