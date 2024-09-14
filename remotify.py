@@ -24,36 +24,39 @@ def initArgParser() -> argparse.Namespace:
 Start an interactive session to send media control commands to a remotifier server. {common.SERVER_COMMAND_DESCRIPTION}
 ''')
     parser.add_argument("host", help="IP or name of the machine to control")
+    parser.add_argument("-l", "--log-level", dest="logLevel", help=f"Level of detail for logged events. Default: {common.DEFAULT_LOG_LEVEL}", default=common.DEFAULT_LOG_LEVEL)
+    parser.add_argument("-p", "--port", help=f"Host port to connect to. Normally, this can be left at the default value. Default: {common.DEFAULT_PORT}.", default=common.DEFAULT_PORT)
     return parser.parse_args()
 
 def main(): 
-    logging.basicConfig(filename='remotify.log', level=logging.DEBUG)
     args = initArgParser()
+    logging.basicConfig(filename='remotify.log', level=args.logLevel.upper())
     
-    comThread = threading.Thread(target=connectToServer, args=[args.host], daemon=True)
+    comThread = threading.Thread(target=connectToServer, args=[args.host, args.port], daemon=True)
     comThread.start()
     
-    # t should only die if an unhandled exception happens. In this case, there is no point filling the queue as it won't be consumed
+    # comThread should only die if an unhandled exception happens. In this case, there is no point filling the queue as it won't be consumed
     while comThread.is_alive():
         toSend.put(input(""))
          
-def connectToServer(host:str):
+def connectToServer(host:str, port:int):
     """Connect to the server via websocket. If the connection was closed deliberately, get ready to reopen it. 
 
     Args:
-        host (str): _description_
+        host (str): 
+        port (int)
     """
     print("Ready to connect to server")
     reconnect = True
     while(reconnect):
         try:
-            connectOnce(host)
+            connectOnce(host, port)
         except queue.Empty:
             logger.debug('User is inactive. Disconnecting websocket')
         except ConnectionClosed as cc:
             logger.warning('Connection was closed. Reopening it.', exc_info=cc)
             
-def connectOnce(host:str) -> None:
+def connectOnce(host:str, port:int) -> None:
     """Connect to the server via websocket upon first message received.
     Send all further messages until a timeout or an error happens
     Args:
@@ -63,7 +66,7 @@ def connectOnce(host:str) -> None:
         ConnectionClosed: When the server has closed the connection
     """
     firstinput = toSend.get()
-    with connect(f"ws://{host}:{common.DEFAULT_PORT}") as websocket:
+    with connect(f"ws://{host}:{port}") as websocket:
         logger.info("Connected to server")
         websocket.send(firstinput)
         while True:

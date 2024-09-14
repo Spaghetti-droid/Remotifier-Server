@@ -1,6 +1,7 @@
 # Constants that are shared between server and client
 
 DEFAULT_PORT = 42121
+DEFAULT_LOG_LEVEL = "WARNING"
 
 SERVER_COMMAND_DESCRIPTION = """\
 Commands recognised by the server:

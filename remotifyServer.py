@@ -21,13 +21,15 @@ def initArgParser() -> argparse.Namespace:
                                      description=f'''\
 Start a remotify server, which listens for single-character commands to execute. {common.SERVER_COMMAND_DESCRIPTION}
 ''')
+    parser.add_argument("-l", "--log-level", dest="logLevel", help=f"Level of detail for logged events. Default: {common.DEFAULT_LOG_LEVEL}", default=common.DEFAULT_LOG_LEVEL)
+    parser.add_argument("-p", "--port", help=f"Port to listen to. Normally, this can be left at the default value. Default: {common.DEFAULT_PORT}.", default=common.DEFAULT_PORT)
     return parser.parse_args()
 
-async def main():  
-    logging.basicConfig(filename='remotifyServer.log', level=logging.DEBUG)
-    initArgParser()
+async def main(): 
+    args = initArgParser() 
+    logging.basicConfig(filename='remotifyServer.log', level=args.logLevel.upper())    
     logger.info("Server starting up")
-    async with serve(listen, "", common.DEFAULT_PORT):
+    async with serve(listen, "", args.port):
         hostIdMessage = f'Listening on host: {socket.gethostname()}'
         print(hostIdMessage)
         logger.info(hostIdMessage)
