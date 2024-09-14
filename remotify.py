@@ -30,7 +30,7 @@ Start an interactive session to send media control commands to a remotifier serv
 
 def main(): 
     args = initArgParser()
-    logging.basicConfig(format=common.LOG_FORMAT, filename='remotify.log', level=args.logLevel.upper())
+    logging.basicConfig(format=common.LOG_FORMAT, filename='remotify.log', level=args.logLevel.upper(), filemode='w')
     
     try:
         logger.warning("Starting up")

@@ -27,7 +27,7 @@ Start a remotify server, which listens for single-character commands to execute.
 
 async def main(): 
     args = initArgParser() 
-    logging.basicConfig(format=common.LOG_FORMAT, filename='remotifyServer.log', level=args.logLevel.upper())    
+    logging.basicConfig(format=common.LOG_FORMAT, filename='remotifyServer.log', level=args.logLevel.upper(), filemode='w')    
     if not isinstance(args.port, int):
         raise ValueError("Port must be an integer")
     
